@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <link rel="stylesheet" href="./main.css">
+  <title>2048</title>
+</head>
+
+<body>
+
+  <div id="point"></div>
+
+  <div id="main">
+    <div id="line1">
+      <div id="container1" class="box cline1"></div>
+      <div id="container2" class="box cline1"></div>
+      <div id="container3" class="box cline1"></div>
+      <div id="container4" class="box cline1"></div>
+    </div>
+    <div id="line2">
+      <div id="container5" class="box cline2"></div>
+      <div id="container6" class="box cline2"></div>
+      <div id="container7" class="box cline2"></div>
+      <div id="container8" class="box cline2"></div>
+    </div>
+    <div id="line3">
+      <div id="container9" class="box cline3"></div>
+      <div id="container10" class="box cline3"></div>
+      <div id="container11" class="box cline3"></div>
+      <div id="container12" class="box cline3"></div>
+    </div>
+    <div id="line4">
+      <div id="container13" class="box cline4"></div>
+      <div id="container14" class="box cline4"></div>
+      <div id="container15" class="box cline4"></div>
+      <div id="container16" class="box cline4"></div>
+    </div>
+  </div>
+
+  <script>
+    let box = document.getElementsByClassName('box');
+    let line1 = document.getElementsByClassName('cline1');
+    let line2 = document.getElementsByClassName('cline2');
+    let line3 = document.getElementsByClassName('cline3');
+    let line4 = document.getElementsByClassName('cline4');
+    let point = document.getElementById('point');
+    let level = 0;
+    let gOver = [];
+    let boxNum;
+    let arr = [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
+    let colorArr = [" ", 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048];
+    const color = ["#87d3ff", "#5bc3ff", "#3ab7ff", "#16aaff", "#00a1ff", "#0083ff", "#006eff", "#004cff", "#0037ff", "#000cff", "#2e00ff", "#5900ff"];
+    for (var i = 0; i < box.length; i++)
+      box[i].innerHTML = " ";
+
+    function getPoint(){
+      point.innerHTML = `점수: ${level}`;
+    }
+
+    function coloring() {
+      for (var i = 0; i < box.length; i++) {
+        for (var j = 0; j < colorArr.length; j++) {
+          if (box[i].innerHTML == colorArr[j])
+            box[i].style.backgroundColor = color[j];
+        }
+      }
+    }
+
+    function randNum() {
+      boxNum = parseInt(Math.random() * 16);
+      for (var i = 0; i < arr.length; i++) {
+        if (box[boxNum].innerHTML != " ") {
+          randNum();
+        } else {
+          return boxNum;
+        }
+      }
+    }
+
+    function shiftLeft() {
+      for (var x = 0; x < 3; x++) {
+        if (line1[x].innerHTML == " ") {
+          line1[x].innerHTML = line1[x + 1].innerHTML;
+          line1[x + 1].innerHTML = " ";
+        }
+        if (line2[x].innerHTML == " ") {
+          line2[x].innerHTML = line2[x + 1].innerHTML;
+          line2[x + 1].innerHTML = " ";
+        }
+        if (line3[x].innerHTML == " ") {
+          line3[x].innerHTML = line3[x + 1].innerHTML;
+          line3[x + 1].innerHTML = " ";
+        }
+        if (line4[x].innerHTML == " ") {
+          line4[x].innerHTML = line4[x + 1].innerHTML;
+          line4[x + 1].innerHTML = " ";
+        }
+      }
+    }
+
+    function shiftRight() {
+      for (var x = 0; x < 3; x++) {
+        if (line1[x + 1].innerHTML == " ") {
+          line1[x + 1].innerHTML = line1[x].innerHTML;
+          line1[x].innerHTML = " ";
+        }
+        if (line2[x + 1].innerHTML == " ") {
+          line2[x + 1].innerHTML = line2[x].innerHTML;
+          line2[x].innerHTML = " ";
+        }
+        if (line3[x + 1].innerHTML == " ") {
+          line3[x + 1].innerHTML = line3[x].innerHTML;
+          line3[x].innerHTML = " ";
+        }
+        if (line4[x + 1].innerHTML == " ") {
+          line4[x + 1].innerHTML = line4[x].innerHTML;
+          line4[x].innerHTML = " ";
+        }
+      }
+    }
+
+    function shiftUp() {
+      for (var x = 0; x < 4; x++) {
+        if (line1[x].innerHTML == " ") {
+          line1[x].innerHTML = line2[x].innerHTML;
+          line2[x].innerHTML = " ";
+        }
+        if (line2[x].innerHTML == " ") {
+          line2[x].innerHTML = line3[x].innerHTML;
+          line3[x].innerHTML = " ";
+        }
+        if (line3[x].innerHTML == " ") {
+          line3[x].innerHTML = line4[x].innerHTML;
+          line4[x].innerHTML = " ";
+        }
+      }
+    }
+
+    function shiftDown() {
+      for (var x = 0; x < 4; x++) {
+        if (line2[x].innerHTML == " ") {
+          line2[x].innerHTML = line1[x].innerHTML;
+          line1[x].innerHTML = " ";
+        }
+        if (line3[x].innerHTML == " ") {
+          line3[x].innerHTML = line2[x].innerHTML;
+          line2[x].innerHTML = " ";
+        }
+        if (line4[x].innerHTML == " ") {
+          line4[x].innerHTML = line3[x].innerHTML;
+          line3[x].innerHTML = " ";
+        }
+      }
+    }
+
+    function leftSum() {
+      for (var x = 0; x < 3; x++) {
+        for (var y = 0; y < arr.length; y++) {
+          if (line1[x].innerHTML == line1[x + 1].innerHTML && line1[x].innerHTML == arr[y]) {
+            line1[x].innerHTML = arr[y + 1];
+            line1[x + 1].innerHTML = " ";
+            level += arr[y];
+          }
+          if (line2[x].innerHTML == line2[x + 1].innerHTML && line2[x].innerHTML == arr[y]) {
+            line2[x].innerHTML = arr[y + 1];
+            line2[x + 1].innerHTML = " ";
+            level += arr[y];
+          }
+          if (line3[x].innerHTML == line3[x + 1].innerHTML && line3[x].innerHTML == arr[y]) {
+            line3[x].innerHTML = arr[y + 1];
+            line3[x + 1].innerHTML = " ";
+            level += arr[y];
+          }
+          if (line4[x].innerHTML == line4[x + 1].innerHTML && line4[x].innerHTML == arr[y]) {
+            line4[x].innerHTML = arr[y + 1];
+            line4[x + 1].innerHTML = " ";
+            level += arr[y];
+          }
+        }
+      }
+    }
+
+    function rightSum() {
+      for (var x = 0; x < 3; x++) {
+        for (var y = 0; y < arr.length; y++) {
+          if (line1[x].innerHTML == line1[x + 1].innerHTML && line1[x].innerHTML == arr[y]) {
+            line1[x + 1].innerHTML = arr[y + 1];
+            line1[x].innerHTML = " ";
+            level += arr[y];
+          }
+          if (line2[x].innerHTML == line2[x + 1].innerHTML && line2[x].innerHTML == arr[y]) {
+            line2[x + 1].innerHTML = arr[y + 1];
+            line2[x].innerHTML = " ";
+            level += arr[y];
+          }
+          if (line3[x].innerHTML == line3[x + 1].innerHTML && line3[x].innerHTML == arr[y]) {
+            line3[x + 1].innerHTML = arr[y + 1];
+            line3[x].innerHTML = " ";
+            level += arr[y];
+          }
+          if (line4[x].innerHTML == line4[x + 1].innerHTML && line4[x].innerHTML == arr[y]) {
+            line4[x + 1].innerHTML = arr[y + 1];
+            line4[x].innerHTML = " ";
+            level += arr[y];
+          }
+        }
+      }
+    }
+
+    function upSum() {
+      for (var x = 0; x < 4; x++) {
+        for (var y = 0; y < arr.length; y++) {
+          if (line1[x].innerHTML == line2[x].innerHTML && line1[x].innerHTML == arr[y]) {
+            line1[x].innerHTML = arr[y + 1];
+            line2[x].innerHTML = " ";
+            level += arr[y];
+          }
+          if (line2[x].innerHTML == line3[x].innerHTML && line2[x].innerHTML == arr[y]) {
+            line2[x].innerHTML = arr[y + 1];
+            line3[x].innerHTML = " ";
+            level += arr[y];
+          }
+          if (line3[x].innerHTML == line4[x].innerHTML && line3[x].innerHTML == arr[y]) {
+            line3[x].innerHTML = arr[y + 1];
+            line4[x].innerHTML = " ";
+            level += arr[y];
+          }
+        }
+      }
+    }
+
+    function downSum() {
+      for (var x = 0; x < 4; x++) {
+        for (var y = 0; y < arr.length; y++) {
+          if (line1[x].innerHTML == line2[x].innerHTML && line1[x].innerHTML == arr[y]) {
+            line2[x].innerHTML = arr[y + 1];
+            line1[x].innerHTML = " ";
+            level += arr[y];
+          }
+          if (line2[x].innerHTML == line3[x].innerHTML && line2[x].innerHTML == arr[y]) {
+            line3[x].innerHTML = arr[y + 1];
+            line2[x].innerHTML = " ";
+            level += arr[y];
+          }
+          if (line3[x].innerHTML == line4[x].innerHTML && line3[x].innerHTML == arr[y]) {
+            line4[x].innerHTML = arr[y + 1];
+            line3[x].innerHTML = " ";
+            level += arr[y];
+          }
+        }
+      }
+    }
+
+    function over(){
+      gOver = 0;
+      for (var i = 0; i < box.length; i++) {
+        if (box[i].innerHTML != " ")
+          gOver++;
+      }
+      if(gOver == 16)
+        alert(`Game Over! \n점수${level}`);
+    }
+
+    $(document).keydown(function(event) {
+      if (event.keyCode == '37') {
+        let num = randNum();
+        box[num].innerHTML = 2;
+        leftSum();
+        shiftLeft();
+        coloring();
+        getPoint();
+        over();
+      }
+    });
+    $(document).keydown(function(event) {
+      if (event.keyCode == '39') {
+        let num = randNum();
+        box[num].innerHTML = 2;
+        rightSum();
+        shiftRight();
+        coloring();
+        getPoint();
+        over();
+      }
+    });
+    $(document).keydown(function(event) {
+      if (event.keyCode == '38') {
+        let num = randNum();
+        box[num].innerHTML = 2;
+        upSum();
+        shiftUp();
+        coloring();
+        getPoint();
+        over();
+      }
+    });
+    $(document).keydown(function(event) {
+      if (event.keyCode == '40') {
+        let num = randNum();
+        box[num].innerHTML = 2;
+        downSum();
+        shiftDown();
+        coloring();
+        getPoint();
+        over();
+      }
+    });
+  </script>
+</body>
+
+</html>
